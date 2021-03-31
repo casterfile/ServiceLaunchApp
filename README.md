@@ -1,4 +1,4 @@
-# Service Always Background
+# Service Launch App
  Sample application that will run a service on a background (**including API Level 24 or higher**).
  The application will always run on the background
 
@@ -10,39 +10,27 @@
 ## Usage
 The following example demonstrates how to open a file:
 ```java
-public class MyServices extends Service {
-    public MyServices() {
+/**
+     * luanching the app from the background
+     * */
+    public void LuanchApp(String packageName){
+        Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if (intent != null) {
+            // We found the activity now start the activity
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Log.i("MyActivity", "Start APP");
+            startActivity(intent);
+        } else {
+            // Bring user to the market or let them choose an app?
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setData(Uri.parse("market://details?id=" + packageName));
+            Log.i("MyActivity", "Download APP ");
+            startActivity(intent);
+        }
     }
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-        onTaskRemoved(intent);
-        Toast.makeText(getApplicationContext(),"This is a Service running in Background",
-                Toast.LENGTH_SHORT).show();
-        return START_STICKY;
-    }
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        Intent restartServiceIntent = new Intent(getApplicationContext(),this.getClass());
-        Log.i("MyActivity", "Our Service on the background ");
-        restartServiceIntent.setPackage(getPackageName());
-        startService(restartServiceIntent);
-        super.onTaskRemoved(rootIntent);
-    }
-}
 
-output
 
-2021-03-25 02:26:31.104 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
-2021-03-25 02:26:31.109 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
-2021-03-25 02:26:31.112 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
-2021-03-25 02:26:31.116 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
-2021-03-25 02:26:31.120 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
-2021-03-25 02:26:31.127 20071-20071/com.sample.servicealwaysbackground I/MyActivity: Our Service on the background 
 
 ```
 
